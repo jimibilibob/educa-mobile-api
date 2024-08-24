@@ -1,0 +1,64 @@
+services:
+    laravel:
+        build:
+            context: ..
+            dockerfile: .devcontainer/Dockerfile
+            args:
+                USERNAME: ${USERNAME}
+        ports:
+            - ${LARAVEL_FORWARD_PORT:-8000}:8000
+        volumes:
+            - ..:/api
+            - /api/vendor
+            - /api/.vscode
+            - /api/bootstrap/cache
+            - ../uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+        networks:
+            - my-network
+        depends_on:
+            - pgsql
+            - redis
+            - mailpit
+    pgsql:
+        image: postgres:14-alpine
+        ports:
+            - "${DB_FORWARD_PORT:-5432}:5432"
+        environment:
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_DATABASE}
+        volumes:
+            - vol-pgsql:/var/lib/postgresql/data
+            # - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+        networks:
+            - my-network
+        healthcheck:
+            test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
+            retries: 3
+            timeout: 5s
+    redis:
+        image: redis:alpine
+        ports:
+            - "6379:6379"
+        volumes:
+            - vol-redis:/data
+        networks:
+            - my-network
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            retries: 3
+            timeout: 5s
+    mailpit:
+        image: axllent/mailpit:latest
+        ports:
+            - "${MAILPIT_FORWARD_PORT:-1025}:1025"
+            - "${MAILPIT_FORWARD_DASHBOARD_PORT:-8025}:8025"
+        networks:
+            - my-network
+networks:
+    my-network:
+        driver: bridge
+volumes:
+    vol-pgsql:
+        driver: local
+    vol-redis:
+        driver: local

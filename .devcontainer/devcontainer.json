@@ -1,0 +1,45 @@
+{
+    "name": "educa-mobile.api",
+    "dockerComposeFile": [
+        "docker-compose.yml"
+    ],
+    "service": "laravel",
+    "workspaceFolder": "/api",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "php.validate.executablePath": "/usr/local/bin/php",
+                "php.executablePath": "/usr/local/bin/php",
+                "php.suggest.basic": false,
+                "editor.snippetSuggestions": "bottom",
+                "terminal.integrated.defaultProfile.linux": "zsh",
+                "terminal.integrated.profiles.linux": {
+                    "zsh": {
+                        "path": "zsh"
+                    }
+                }
+            },
+            "extensions": [
+                "mhutchie.git-graph",
+                "eamodio.gitlens",
+                "Andreabbondanza.ignoregit",
+                "damianbal.vs-phpclassgen",
+                "onecentlin.laravel5-snippets",
+                "mikestead.dotenv",
+                "EditorConfig.EditorConfig",
+                "ryannaddy.laravel-artisan",
+                "amiralizadeh9480.laravel-extra-intellisense",
+                "xdebug.php-pack",
+                "bmewburn.vscode-intelephense-client",
+                "MehediDracula.php-namespace-resolver",
+                "kokororin.vscode-phpfmt"
+            ]
+        }
+    },
+    "postCreateCommand": "git config core.editor 'code --wait'",
+    // Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+    // "remoteUser": "marco",
+    "mounts": [
+        "source=${localEnv:HOME}/.ssh,target=/home/$USERNAME/.ssh,type=bind,consistency=cached"
+    ]
+}
